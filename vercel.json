@@ -1,14 +1,12 @@
 {
-  "redirects": [
+  "rewrites": [
     {
       "source": "/",
-      "destination": "/frontend/admin_login/login.html",
-      "permanent": false
+      "destination": "/frontend/admin_login/login.html"
     },
     {
       "source": "/reset-password",
-      "destination": "/frontend/recover/recover.html",
-      "permanent": false
+      "destination": "/frontend/recover/recover.html"
     }
   ]
 }
