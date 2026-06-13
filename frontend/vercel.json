@@ -1,0 +1,14 @@
+{
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/admin_login/login.html",
+      "permanent": true
+    },
+    {
+      "source": "/reset-password",
+      "destination": "/recover/recover.html",
+      "permanent": true
+    }
+  ]
+}
