@@ -2,13 +2,13 @@
   "redirects": [
     {
       "source": "/",
-      "destination": "frontend/admin_login",
-      "permanent": true
+      "destination": "/frontend/admin_login/login.html",
+      "permanent": false
     },
     {
       "source": "/reset-password",
-      "destination": "frontend/recover",
-      "permanent": true
+      "destination": "/frontend/recover/recover.html",
+      "permanent": false
     }
   ]
 }
