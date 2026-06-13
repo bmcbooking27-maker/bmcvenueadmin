@@ -6,7 +6,7 @@
       "permanent": true
     },
     {
-      "source": "/reset-password",
+      "source": "/",
       "destination": "/recover/recover.html",
       "permanent": true
     }
