@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reset Password – BMC Booking</title>
+  <link rel="stylesheet" href="recover.css" />
+  <link rel="icon" type="image/jpeg" href="../assets/logo/logo.jpeg" />
+  <style>
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    input[type="password"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+
+<img src="../assets/logo/bmc.jpeg" alt="" id="bg-image" />
+
+  <main class="page-wrapper">
+    <div class="login-card" style="padding-top: 16px;">
+
+      <!-- Logo / Brand -->
+      <div class="brand" style="display:flex; align-items:center; gap:12px;">
+        <img src="../assets/logo/logo.jpeg" alt="" style="width: 80px; height: 100px; flex-shrink:0;" />
+        <h1 style="font-size: 20px; margin: 0; white-space: nowrap;">BHARATA MATA COLLEGE</h1>
+      </div>
+
+      <p class="card-subtitle" style="font-size: 18px; color: #202124; font-weight: 500; margin-bottom: 24px;">Reset Password</p>
+
+      <form id="reset-form" novalidate>
+        <!-- New Password -->
+        <div class="form-group">
+          <label for="new-password">New Password</label>
+          <div style="position: relative;">
+            <input
+              type="password"
+              id="new-password"
+              name="new-password"
+              placeholder="Enter your new password"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group">
+          <label for="confirm-password">Confirm Password</label>
+          <div style="position: relative;">
+            <input
+              type="password"
+              id="confirm-password"
+              name="confirm-password"
+              placeholder="Confirm your new password"
+              required
+            />
+          </div>
+        </div>
+        
+        <div id="error-message" style="color: #d93025; font-size: 14px; margin-top: -8px; margin-bottom: 16px; display: none;"></div>
+
+        <button type="submit" id="reset-btn" class="login-btn" style="display: flex; align-items: center; justify-content: center;">
+          <span>Reset Password</span>
+        </button>
+      </form>
+      
+      <div style="margin-top: 16px; text-align: center;">
+        <a href="../login/login.html" style="color: #1a73e8; text-decoration: none; font-size: 14px; font-weight: 500;">Back to Login</a>
+      </div>
+      
+    </div>
+  </main>
+
+  <!-- Success Modal Overlay -->
+  <div id="success-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 8px; padding: 24px; width: 90%; max-width: 400px; box-shadow: 0 4px 24px rgba(0,0,0,0.2); text-align: center;">
+      <div style="width: 48px; height: 48px; border-radius: 50%; background: #e6f4ea; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#137333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+      </div>
+      <h3 style="margin: 0 0 8px; color: #202124; font-size: 18px;">Password Reset Successful</h3>
+      <p style="margin: 0 0 24px; color: #5f6368; font-size: 14px; line-height: 1.5;">Your password has been updated successfully.<br>Redirecting to login page...</p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../supabase.js"></script>
+  <script src="recover.js"></script>
+</body>
+</html>
