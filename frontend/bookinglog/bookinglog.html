@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts for modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../admin-style.css">
+    <link rel="stylesheet" href="bookinglog.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=delete,edit" />
+    <link rel="icon" type="image/jpeg" href="../assets/logo/logo.jpeg" />
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sticky Navbar matching index.html / venues.html -->
+        <header class="navbar">
+            <div class="nav-brand">
+                <span class="brand-text">BOOK MY VENUE</span>
+            </div>
+
+            <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+                <span class="nav-toggle-bar"></span>
+                <span class="nav-toggle-bar"></span>
+                <span class="nav-toggle-bar"></span>
+            </button>
+
+            <div class="nav-panel">
+                <nav class="nav-menu">
+                    <a href="../index.html" class="nav-item active">Admin Portal</a>
+                </nav>
+
+                <div class="nav-actions">
+                    <button class="btn-admin logout-btn">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="venues-main">
+            <div class="venues-table-wrap">
+                <!-- Search & Filters Toolbar -->
+                <div class="table-toolbar admin-toolbar" style="flex-direction: column; align-items: stretch; gap: 20px;">
+                    
+                    <!-- Top Line: Title & Admin Booking Button -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <h2 class="table-heading" style="margin: 0;">Booking History</h2>
+                        <button class="btn-primary-blue admin-new-booking-btn" style="width: 145px;" onclick="window.location.href='../index.html'">Admin Booking</button>
+                    </div>
+
+                    <!-- Second Line: Filters & Search Bar -->
+                    <div class="admin-filter-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 16px;">
+                        <div class="admin-filters">
+                            <div class="admin-filter-group">
+                                <label for="venue-filter" class="search-label">Venue:</label>
+                                <select id="venue-filter" class="input-field admin-filter-input">
+                                    <option value="">All</option>
+                                    <option value="AV Room">AV Room</option>
+                                    <option value="BMC Auditorium">BMC Auditorium</option>
+                                    <option value="MBA Seminar Hall">MBA Seminar Hall</option>
+                                    <option value="MBA Auditorium">MBA Auditorium</option>
+                                    <option value="MSW Seminar Hall">MSW Seminar Hall</option>
+                                    <option value="BCA Lab">BCA Lab</option>
+                                    <option value="MBA Lab">MBA Lab</option>
+                                </select>
+                            </div>
+                            <div class="admin-filter-group">
+                                <label for="date-filter" class="search-label">Date:</label>
+                                <input type="date" id="date-filter" class="input-field admin-filter-input">
+                            </div>
+                            <button class="btn-primary-blue admin-filter-btn" id="clear-filter">Clear Filter</button>
+                        </div>
+                        
+                        <!-- Search Bar -->
+                        <div class="admin-search-wrap" style="flex: 1; max-width: 380px;">
+                            <svg class="admin-search-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/></svg>
+                            <input
+                                type="text"
+                                id="admin-search"
+                                class="admin-search-input"
+                                placeholder="Search by venue, department, contact…"
+                                autocomplete="off"
+                            >
+                            <button class="admin-search-clear" id="admin-search-clear" title="Clear search" style="display:none;">&#x2715;</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Content -->
+                <div class="table-scroll">
+                    <table class="venues-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Name of Function</th>
+                                <th>Venue</th>
+                                <th>Coordinator</th>
+                                <th>Department</th>
+                                <th>Time (From)</th>
+                                <th>Time (To)</th>
+                                <th>Contact No</th>
+                                <th style="text-align: center;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-body">
+                            <!-- Populated dynamically from Supabase -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- System Footer matching index.html / venues.html -->
+        <footer class="system-footer">
+            <div class="footer-line"></div>
+            <p>&copy; 2026 Bharata Mata College Thrikkakara.</p>
+        </footer>
+    </div>
+
+    <!-- New / Edit Booking Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-wrapper">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Create New Booking</h2>
+                <button class="close-btn" id="closeModalBtn">&times;</button>
+            </div>
+            <form id="bookingForm" class="booking-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="booking-date">Date</label>
+                        <input type="date" id="booking-date" name="date" required class="input-field">
+                    </div>
+                    <div class="form-group">
+                        <label for="booking-time-from">Time (From)</label>
+                        <div style="position: relative;">
+                            <input type="time" id="booking-time-from" name="timeFrom" required class="input-field">
+                            <div class="strict-time-overlay" data-target="booking-time-from"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="booking-time-to">Time (To)</label>
+                        <div style="position: relative;">
+                            <input type="time" id="booking-time-to" name="timeTo" required class="input-field">
+                            <div class="strict-time-overlay" data-target="booking-time-to"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="time-error" style="color: #c0392b; font-size: 0.8rem; display: none; margin-top: -15px; margin-bottom: 5px; margin-left: 2px;">Invalid time format</div>
+                <div class="form-group">
+                    <label for="booking-function">Name of Function</label>
+                    <input type="text" id="booking-function" name="functionName" placeholder="e.g. International Seminar" required class="input-field">
+                </div>
+                <div class="form-group">
+                    <label for="booking-venue">Venue</label>
+                    <!-- Hidden native select keeps form validation & value submission -->
+                    <input type="hidden" id="booking-venue" name="venue" required>
+                    <div class="venue-custom-select" id="venueCustomSelect">
+                        <div class="venue-selected-display" id="venueSelectedDisplay">Select</div>
+                        <ul class="venue-dropdown-list" id="venueDropdownList">
+                            <li class="venue-option" data-value="">Select</li>
+                            <li class="venue-option" data-value="AV Room"><span class="venue-opt-name">AV Room</span><span class="venue-opt-status"></span></li>
+                            <li class="venue-option" data-value="BMC Auditorium"><span class="venue-opt-name">BMC Auditorium</span><span class="venue-opt-status"></span></li>
+                            <li class="venue-option" data-value="MBA Seminar Hall"><span class="venue-opt-name">MBA Seminar Hall</span><span class="venue-opt-status"></span></li>
+                            <li class="venue-option" data-value="MBA Auditorium"><span class="venue-opt-name">MBA Auditorium</span><span class="venue-opt-status"></span></li>
+                            <li class="venue-option" data-value="MSW Seminar Hall"><span class="venue-opt-name">MSW Seminar Hall</span><span class="venue-opt-status"></span></li>
+                            <li class="venue-option" data-value="BCA Lab"><span class="venue-opt-name">BCA Lab</span><span class="venue-opt-status"></span></li>
+                            <li class="venue-option" data-value="MBA Lab"><span class="venue-opt-name">MBA Lab</span><span class="venue-opt-status"></span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="booking-coordinator">Coordinator</label>
+                    <input type="text" id="booking-coordinator" name="coordinator" placeholder="Name of Coordinator" required class="input-field">
+                </div>
+                <div class="form-group">
+                    <label for="booking-department">Department</label>
+                    <div style="position: relative; width: 100%;">
+                        <input type="text" id="booking-department" name="department" placeholder="Name of Department" required class="input-field" autocomplete="off">
+                        <ul id="department-dropdown" class="autocomplete-dropdown"></ul>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="booking-contact">Contact No</label>
+                    <div class="input-field" style="display: flex; align-items: center; padding: 0; overflow: hidden; background-color: var(--surface);">
+                        <span style="padding: 8px 12px; background-color: #f3f4f6; color: #4b5563; font-weight: 500; border-right: 1px solid var(--border-color); user-select: none;">+91</span>
+                        <input type="tel" id="booking-contact" name="contactNo" placeholder="Contact Number" style="border: none; outline: none; padding: 8px 12px; width: 100%; background: transparent; font-family: inherit; font-size: inherit; color: inherit;">
+                    </div>
+                    <span id="contact-error" style="color: #c0392b; font-size: 12px; font-weight: 600; display: none; margin-top: 4px;">Contact number must be exactly 10 digits.</span>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelModalBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="submitBookingBtn">Save Booking</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- NEW SCHEDULE PANEL -->
+        <div class="modal-schedule" id="modalSchedulePanel">
+            <div class="modal-header">
+                <h3 style="font-size: 1.2rem;">Existing Bookings: <span id="scheduleDateDisplay" style="color: var(--text-muted); font-weight: 600;"></span></h3>
+            </div>
+            <div class="schedule-list" id="scheduleList">
+                <div class="schedule-empty">Select a date to view existing bookings.</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <!-- Supabase and Logic -->
+    <script src="../script.js"></script>
+    <script src="../supabase.js"></script>
+    <script src="../admin_login/login.js"></script>
+    <script>
+        if (typeof isAdminAuthenticated !== 'function' || !isAdminAuthenticated()) {
+            window.location.replace('../admin_login/login.html');
+        }
+
+        const modal = document.getElementById("bookingModal");
+        const modalTitle = document.getElementById("modalTitle");
+        const closeBtn = document.getElementById("closeModalBtn");
+        const cancelBtn = document.getElementById("cancelModalBtn");
+        const bookingForm = document.getElementById("bookingForm");
+        const submitBookingBtn = document.getElementById("submitBookingBtn");
+        const tableBody = document.getElementById("admin-table-body");
+
+        let editingBookingId = null;
+
+        function toTimeInputValue(timeStr) {
+            if (!timeStr) return '';
+            return String(timeStr).slice(0, 5);
+        }
+
+        function getFormData() {
+            const contactVal = document.getElementById('booking-contact').value.trim();
+            return {
+                Date: document.getElementById('booking-date').value,
+                'Time(from)': document.getElementById('booking-time-from').value,
+                'Time(to)': document.getElementById('booking-time-to').value,
+                Function_Name: document.getElementById('booking-function').value.trim(),
+                Venue: document.getElementById('booking-venue').value,
+                Coordinator: document.getElementById('booking-coordinator').value.trim(),
+                Department_Name: document.getElementById('booking-department').value.trim(),
+                contact_no: contactVal ? Number(contactVal) : null
+            };
+        }
+
+        function openCreateModal() {
+            editingBookingId = null;
+            modalTitle.textContent = 'Create New Booking';
+            submitBookingBtn.textContent = 'Save Booking';
+            bookingForm.reset();
+            const todayStr = new Date().toISOString().split('T')[0];
+            document.getElementById('booking-date').min = todayStr;
+            modal.classList.add('show');
+            updateSchedulePanel();
+        }
+
+        function openEditModal(booking) {
+            editingBookingId = booking.Booking_ID;
+            modalTitle.textContent = 'Edit Booking';
+            submitBookingBtn.textContent = 'Update Booking';
+            document.getElementById('booking-date').value = booking.Date || '';
+            document.getElementById('booking-time-from').value = toTimeInputValue(booking['Time(from)']);
+            document.getElementById('booking-time-to').value = toTimeInputValue(booking['Time(to)']);
+            document.getElementById('booking-function').value = booking.Function_Name || '';
+            document.getElementById('booking-venue').value = booking.Venue || '';
+            document.getElementById('booking-coordinator').value = booking.Coordinator || '';
+            document.getElementById('booking-department').value = booking.Department_Name || '';
+            document.getElementById('booking-contact').value = booking.contact_no ? String(booking.contact_no) : '';
+            modal.classList.add('show');
+            updateSchedulePanel();
+        }
+
+        function closeModal() {
+            modal.classList.remove('show');
+            bookingForm.reset();
+            editingBookingId = null;
+            modalTitle.textContent = 'Create New Booking';
+            submitBookingBtn.textContent = 'Save Booking';
+        }
+
+        closeBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+        
+        const logoutBtn = document.querySelector(".logout-btn");
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", () => {
+                if (typeof clearAdminSession === 'function') {
+                    clearAdminSession();
+                }
+                window.location.href = "../admin_login/login.html";
+            });
+        }
+        
+        // Cache all bookings for instant search filtering
+        let cachedBookings = [];
+
+        // --- Search logic ---
+        const searchInput = document.getElementById('admin-search');
+        const searchClear = document.getElementById('admin-search-clear');
+
+        searchInput.addEventListener('input', () => {
+            const q = searchInput.value.trim();
+            searchClear.style.display = q ? 'flex' : 'none';
+            applyFilters();
+        });
+
+        searchClear.addEventListener('click', () => {
+            searchInput.value = '';
+            searchClear.style.display = 'none';
+            applyFilters();
+        });
+
+        function applyFilters() {
+            const filterDate = document.getElementById('date-filter').value;
+            const filterVenue = document.getElementById('venue-filter')?.value;
+            const q = searchInput.value.trim().toLowerCase();
+            const colCount = 9;
+
+            if (cachedBookings.length === 0) return;
+
+            let results = cachedBookings;
+
+            // Date filter
+            if (filterDate) {
+                results = results.filter(b => b.Date === filterDate);
+            }
+
+            // Venue filter
+            if (filterVenue) {
+                results = results.filter(b => b.Venue === filterVenue);
+            }
+
+            // Search filter — venue, department, contact
+            if (q) {
+                results = results.filter(b =>
+                    (b.Venue || '').toLowerCase().includes(q) ||
+                    (b.Department_Name || '').toLowerCase().includes(q) ||
+                    String(b.contact_no || '').includes(q)
+                );
+            }
+
+            renderRows(results, colCount);
+        }
+
+        async function loadBookings() {
+            const colCount = 9;
+            tableBody.innerHTML = `<tr><td colspan="${colCount}" style="text-align:center; padding: 20px;">Loading...</td></tr>`;
+            const allBookings = await fetchBookings();
+            tableBody.innerHTML = '';
+
+            if (allBookings.error || allBookings.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding: 20px;">No bookings found.</td></tr>`;
+                return;
+            }
+
+            cachedBookings = allBookings;
+            applyFilters();
+        }
+
+        function renderRows(bookingsToDisplay, colCount = 9) {
+            tableBody.innerHTML = '';
+
+            if (bookingsToDisplay.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="${colCount}" style="text-align:center; padding: 20px;">No results found.</td></tr>`;
+                return;
+            }
+
+            bookingsToDisplay.forEach(b => {
+                const tr = document.createElement('tr');
+                tr.className = 'row-booked';
+                tr.dataset.bookingId = b.Booking_ID;
+                const contactNo = b.contact_no ? String(b.contact_no) : '—';
+                const timeFrom = formatTimeToAMPM(toTimeInputValue(b['Time(from)']));
+                const timeTo = formatTimeToAMPM(toTimeInputValue(b['Time(to)']));
+                tr.innerHTML = `
+                    <td data-label="Date">${b.Date ? b.Date.split('-').reverse().join('-') : ''}</td>
+                    <td class="font-medium" data-label="Function">${b.Function_Name || ''}</td>
+                    <td data-label="Venue">${b.Venue || ''}</td>
+                    <td data-label="Coordinator">${b.Coordinator || ''}</td>
+                    <td data-label="Department">${b.Department_Name || '—'}</td>
+                    <td data-label="Time From">${timeFrom}</td>
+                    <td data-label="Time To">${timeTo}</td>
+                    <td data-label="Contact">${contactNo}</td>
+                    <td data-label="Action">
+                        <div class="action-cell">
+                            <button type="button" class="btn-action-edit" data-action="edit" title="Edit" style="display: inline-flex; align-items: center; justify-content: center; padding: 6px 10px;">
+                                <span class="material-symbols-outlined" style="font-size: 17px;">edit</span>
+                            </button>
+                            <button type="button" class="btn-action-delete" data-action="delete" title="Delete" style="display: inline-flex; align-items: center; justify-content: center; padding: 6px 10px;">
+                                <span class="material-symbols-outlined" style="font-size: 17px;">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        tableBody.addEventListener('click', async (e) => {
+            const btn = e.target.closest('[data-action]');
+            if (!btn) return;
+
+            const row = btn.closest('tr');
+            const bookingId = Number(row?.dataset.bookingId);
+            if (!bookingId) return;
+
+            const booking = cachedBookings.find(b => b.Booking_ID === bookingId);
+            if (!booking) return;
+
+            if (btn.dataset.action === 'edit') {
+                openEditModal(booking);
+                return;
+            }
+
+            if (btn.dataset.action === 'delete') {
+                const label = booking.Function_Name || 'this booking';
+                const displayDate = booking.Date ? booking.Date.split('-').reverse().join('-') : '';
+                if (!confirm(`Delete "${label}" on ${displayDate}? This cannot be undone.`)) return;
+
+                btn.disabled = true;
+                try {
+                    await deleteBooking(bookingId);
+                    await loadBookings();
+                    showToast('The booking has been removed from the database.', 'success', 'Booking Deleted');
+                } catch (err) {
+                    showToast(err.message || 'Could not delete booking.', 'error', 'Delete Failed');
+                    btn.disabled = false;
+                }
+            }
+        });
+
+        function showToast(message, type = "success", title) {
+            const container = document.getElementById("toast-container");
+            const toast = document.createElement("div");
+            toast.className = `toast toast-${type}`;
+
+            const icon = type === "success"
+                ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>`
+                : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>`;
+
+            const heading = title || (type === "success" ? "Success" : "Something Went Wrong");
+
+            toast.innerHTML = `
+                <div class="toast-icon">${icon}</div>
+                <div class="toast-content">
+                    <strong>${heading}</strong>
+                    <p>${message}</p>
+                </div>
+                <button type="button" class="toast-close" aria-label="Dismiss">&times;</button>
+            `;
+
+            container.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add("show"));
+
+            const dismiss = () => {
+                toast.classList.remove("show");
+                setTimeout(() => toast.remove(), 320);
+            };
+
+            toast.querySelector(".toast-close").addEventListener("click", dismiss);
+            setTimeout(dismiss, 4500);
+        }
+
+        bookingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const data = getFormData();
+            const isEdit = editingBookingId !== null;
+            const originalText = submitBookingBtn.textContent;
+            submitBookingBtn.textContent = isEdit ? 'Updating...' : 'Saving...';
+            submitBookingBtn.disabled = true;
+
+            try {
+                // Basic time validation
+                if (data['Time(from)'] >= data['Time(to)']) {
+                    showToast('Start time must be before end time.', 'error', 'Invalid Time');
+                    return;
+                }
+
+                // Check for overlapping bookings
+                const overlapCheck = await checkBookingOverlap(data, isEdit ? editingBookingId : null);
+                if (overlapCheck.overlap) {
+                    const cb = overlapCheck.conflictingBooking;
+                    const cTimeFrom = toTimeInputValue(cb['Time(from)']);
+                    const cTimeTo = toTimeInputValue(cb['Time(to)']);
+                    showToast(`This venue is already booked from ${cTimeFrom} to ${cTimeTo} for ${cb.Function_Name || 'another event'}.`, 'error', 'Already Booked');
+                    return;
+                }
+
+                if (isEdit) {
+                    await updateBooking(editingBookingId, data);
+                    showToast('Your changes have been saved to the database.', 'success', 'Booking Updated');
+                } else {
+                    await insertBooking(data);
+                    showToast('Your booking has been saved to the database.', 'success', 'Booking Saved');
+                }
+                closeModal();
+                await loadBookings();
+            } catch (err) {
+                showToast(err.message || 'Could not save booking. Check your API key in supabase.js.', 'error', isEdit ? 'Update Failed' : 'Save Failed');
+            } finally {
+                submitBookingBtn.textContent = originalText;
+                submitBookingBtn.disabled = false;
+            }
+        });
+        
+        const dateFilterInput = document.getElementById("date-filter");
+        const venueFilterInput = document.getElementById("venue-filter");
+        const clearFilterBtn = document.getElementById("clear-filter");
+        
+        if (clearFilterBtn) {
+            clearFilterBtn.addEventListener('click', () => {
+                if (dateFilterInput) dateFilterInput.value = '';
+                if (venueFilterInput) venueFilterInput.value = '';
+                if (searchInput) {
+                    searchInput.value = '';
+                    searchClear.style.display = 'none';
+                }
+                applyFilters();
+            });
+        }
+        if (dateFilterInput) {
+            dateFilterInput.addEventListener('change', applyFilters);
+        }
+        if (venueFilterInput) {
+            venueFilterInput.addEventListener('change', applyFilters);
+        }
+        
+        const bDateInput = document.getElementById('booking-date');
+        const bTimeFromInput = document.getElementById('booking-time-from');
+        const bTimeToInput = document.getElementById('booking-time-to');
+        const bVenueInput = document.getElementById('booking-venue');
+        const scheduleDateDisplay = document.getElementById('scheduleDateDisplay');
+        const scheduleList = document.getElementById('scheduleList');
+
+        function updateSchedulePanel() {
+            const selectedDate = bDateInput.value;
+            const selectedVenue = bVenueInput.value;
+            const tFrom = bTimeFromInput.value;
+            const tTo = bTimeToInput.value;
+            
+            const modalWrapper = document.querySelector('.modal-wrapper');
+            const timeError = document.getElementById('time-error');
+            
+            if (tFrom && tTo && tFrom >= tTo) {
+                if (timeError) timeError.style.display = 'block';
+            } else {
+                if (timeError) timeError.style.display = 'none';
+            }
+
+            // No date AND no venue — hide schedule panel
+            if (!selectedDate && !selectedVenue) {
+                if (modalWrapper) modalWrapper.classList.remove('show-schedule');
+                scheduleDateDisplay.textContent = '...';
+                scheduleList.innerHTML = '<div class="schedule-empty" style="color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 20px;">Select a date or venue to view existing bookings.</div>';
+                return;
+            }
+            
+            if (modalWrapper) modalWrapper.classList.add('show-schedule');
+
+            // Build heading label
+            if (selectedDate && selectedVenue) {
+                scheduleDateDisplay.textContent = `${selectedVenue} — ${selectedDate.split('-').reverse().join('-')}`;
+            } else if (selectedDate) {
+                scheduleDateDisplay.textContent = selectedDate.split('-').reverse().join('-');
+            } else {
+                scheduleDateDisplay.textContent = selectedVenue;
+            }
+
+            // Filter bookings by date and/or venue
+            let dayBookings = cachedBookings;
+            if (selectedDate) {
+                dayBookings = dayBookings.filter(b => b.Date === selectedDate);
+            }
+            if (selectedVenue) {
+                dayBookings = dayBookings.filter(b => b.Venue === selectedVenue);
+            }
+
+            // When creating a new booking, only show upcoming (today or future) bookings
+            if (editingBookingId === null) {
+                const todayStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+                dayBookings = dayBookings.filter(b => b.Date >= todayStr);
+            }
+
+            if (dayBookings.length === 0) {
+                scheduleList.innerHTML = '<div class="schedule-empty" style="color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 20px;">No upcoming bookings found.</div>';
+                return;
+            }
+
+            dayBookings.sort((a, b) => (a['Time(from)'] || '').localeCompare(b['Time(from)'] || ''));
+
+            let html = '';
+            dayBookings.forEach(b => {
+                let isOverlap = false;
+                const venueMatches = !selectedVenue || selectedVenue === b.Venue;
+                const dateMatches = !selectedDate || selectedDate === b.Date;
+
+                if (selectedVenue && venueMatches && dateMatches && (tFrom || tTo)) {
+                    const existingFrom = b['Time(from)'];
+                    const existingTo = b['Time(to)'];
+                    
+                    if (editingBookingId !== b.Booking_ID) {
+                        if (tFrom && tTo) {
+                            if (tFrom < existingTo && tTo > existingFrom) isOverlap = true;
+                        } else if (tFrom) {
+                            if (tFrom >= existingFrom && tFrom < existingTo) isOverlap = true;
+                        } else if (tTo) {
+                            if (tTo > existingFrom && tTo <= existingTo) isOverlap = true;
+                        }
+                    }
+                }
+
+                const cTimeFrom = formatTimeToAMPM(toTimeInputValue(b['Time(from)']));
+                const cTimeTo = formatTimeToAMPM(toTimeInputValue(b['Time(to)']));
+                const dateLabel = selectedDate ? '' : `<span style="font-size: 11px; color: var(--text-muted);">${b.Date ? b.Date.split('-').reverse().join('-') : ''}</span>`;
+                
+                html += `
+                    <div class="schedule-item ${isOverlap ? 'has-overlap' : ''}" style="cursor: pointer;" onclick="scrollToBooking(${b.Booking_ID})">
+                        <div class="schedule-item-header">
+                            <span class="schedule-item-venue">${b.Venue || '—'} ${dateLabel}</span>
+                            <span class="schedule-item-time">${cTimeFrom} - ${cTimeTo}</span>
+                        </div>
+                        <div class="schedule-item-details">
+                            <span class="schedule-item-func">${b.Function_Name || '—'}</span>
+                            <span class="schedule-item-coord" style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">${b.Coordinator || '—'} • ${b.Department_Name || '—'}</span>
+                        </div>
+                        ${isOverlap ? '<div class="clash-warning">Already Booked</div>' : ''}
+                    </div>
+                `;
+            });
+
+            scheduleList.innerHTML = html;
+        }
+
+        window.scrollToBooking = function(bookingId) {
+            closeModal();
+            setTimeout(() => {
+                const row = document.querySelector(`tr[data-booking-id="${bookingId}"]`);
+                if (row) {
+                    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    const origBg = row.style.backgroundColor;
+                    row.style.backgroundColor = '#e0f2fe';
+                    row.style.transition = 'background-color 0.5s';
+                    setTimeout(() => {
+                        row.style.backgroundColor = origBg;
+                    }, 2000);
+                }
+            }, 300);
+        };
+
+        bDateInput.addEventListener('input', updateSchedulePanel);
+        bDateInput.addEventListener('input', updateVenueAvailability);
+        bTimeFromInput.addEventListener('input', updateSchedulePanel);
+        bTimeFromInput.addEventListener('input', updateVenueAvailability);
+        bTimeToInput.addEventListener('input', updateSchedulePanel);
+        bTimeToInput.addEventListener('input', updateVenueAvailability);
+        bVenueInput.addEventListener('change', updateSchedulePanel);
+
+        // Venue availability labels in dropdown
+        const venueNames = ['AV Room', 'BMC Auditorium', 'MBA Seminar Hall', 'MBA Auditorium', 'MSW Seminar Hall', 'BCA Lab', 'MBA Lab'];
+
+        // Custom venue dropdown logic
+        const venueHidden = document.getElementById('booking-venue');
+        const venueDisplay = document.getElementById('venueSelectedDisplay');
+        const venueDropdownList = document.getElementById('venueDropdownList');
+        const venueCustomSelect = document.getElementById('venueCustomSelect');
+
+        venueDisplay.addEventListener('click', () => {
+            venueCustomSelect.classList.toggle('open');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!venueCustomSelect.contains(e.target)) {
+                venueCustomSelect.classList.remove('open');
+            }
+        });
+
+        venueDropdownList.addEventListener('click', (e) => {
+            const li = e.target.closest('.venue-option');
+            if (!li) return;
+            const val = li.dataset.value;
+            venueHidden.value = val;
+            venueDisplay.textContent = val || 'Select';
+            venueCustomSelect.classList.remove('open');
+            // Trigger schedule panel update
+            updateSchedulePanel();
+        });
+
+        function updateVenueAvailability() {
+            const selDate = bDateInput.value;
+            const tFrom = bTimeFromInput.value;
+            const tTo = bTimeToInput.value;
+
+            const statusSpans = venueDropdownList.querySelectorAll('.venue-option[data-value] .venue-opt-status');
+
+            // Reset labels if date or both times not provided
+            if (!selDate || !tFrom || !tTo) {
+                statusSpans.forEach(s => { s.textContent = ''; s.style.color = ''; });
+                return;
+            }
+
+            venueDropdownList.querySelectorAll('.venue-option[data-value]').forEach(li => {
+                const v = li.dataset.value;
+                if (!v) return;
+                const statusEl = li.querySelector('.venue-opt-status');
+                if (!statusEl) return;
+
+                const isBooked = cachedBookings.some(b => {
+                    if (b.Venue !== v || b.Date !== selDate) return false;
+                    if (editingBookingId && b.Booking_ID === editingBookingId) return false;
+                    return tFrom < b['Time(to)'] && tTo > b['Time(from)'];
+                });
+
+                statusEl.textContent = isBooked ? 'Booked' : 'Available';
+                statusEl.style.color = isBooked ? '#c0392b' : '#27ae60';
+            });
+        }
+
+        const bContactInput = document.getElementById('booking-contact');
+        const contactError = document.getElementById('contact-error');
+        bContactInput.addEventListener('input', () => {
+            // Strip out non-numeric characters and limit to 10 digits
+            bContactInput.value = bContactInput.value.replace(/\D/g, '').slice(0, 10);
+            
+            const val = bContactInput.value.trim();
+            if (val.length > 0 && val.length !== 10) {
+                contactError.style.display = 'block';
+            } else {
+                contactError.style.display = 'none';
+            }
+        });
+        
+        const departmentsList = [
+            "Botany", "Chemistry", "Commerce", "Computer Science AI and ML", "Economics", 
+            "English", "Hindi", "Malayalam", "Mathematics", "Physical Education", "Physics", 
+            "Zoology", "Actuarial Science", "AI & Data Analytics", "Business Administration", 
+            "Computer Applications", "Computer Applications and Information Technology", 
+            "Data Science", "Finance and Taxation", "Internet of Things", 
+            "Marketing and Brand Management", "Networking & Cybersecurity", "Psychology", 
+            "Travel and Tourism", "Master of Business Administration (MBA)", 
+            "Master of Social Work (MSW)"
+        ];
+
+        const deptInput = document.getElementById('booking-department');
+        const deptDropdown = document.getElementById('department-dropdown');
+
+        function renderDeptDropdown(query) {
+            const lowerQuery = query.toLowerCase().trim();
+            const filtered = departmentsList.filter(d => {
+                const lowerD = d.toLowerCase();
+                if (lowerD.includes(lowerQuery)) return true;
+                
+                // Support for common acronyms and keywords
+                if (lowerQuery === "cs" && lowerD.includes("computer science")) return true;
+                if (lowerQuery === "mca" && lowerD === "computer applications") return true;
+                if (lowerQuery === "bca" && lowerD.includes("computer applications and information technology")) return true;
+                if (lowerQuery === "mba" && lowerD.includes("business administration")) return true;
+                if (lowerQuery === "msw" && lowerD.includes("social work")) return true;
+                if (lowerQuery === "ai" && (lowerD.includes("ai & data") || lowerD.includes("computer science ai"))) return true;
+                if (lowerQuery === "ds" && lowerD.includes("data science")) return true;
+                if (lowerQuery === "iot" && lowerD.includes("internet of things")) return true;
+                if (lowerQuery === "pe" && lowerD.includes("physical education")) return true;
+                
+                return false;
+            });
+            
+            deptDropdown.innerHTML = '';
+            
+            if (filtered.length === 0) {
+                deptDropdown.innerHTML = '<li class="autocomplete-no-results">No departments found</li>';
+            } else {
+                filtered.forEach(dept => {
+                    const li = document.createElement('li');
+                    li.className = 'autocomplete-item';
+                    li.textContent = dept;
+                    li.addEventListener('mousedown', (e) => {
+                        e.preventDefault(); // Prevent input blur from firing before click
+                        deptInput.value = dept;
+                        deptDropdown.classList.remove('show');
+                    });
+                    deptDropdown.appendChild(li);
+                });
+            }
+        }
+
+        deptInput.addEventListener('focus', () => {
+            renderDeptDropdown(deptInput.value);
+            deptDropdown.classList.add('show');
+        });
+
+        deptInput.addEventListener('input', () => {
+            renderDeptDropdown(deptInput.value);
+            deptDropdown.classList.add('show');
+        });
+
+        deptInput.addEventListener('blur', () => {
+            deptDropdown.classList.remove('show');
+        });
+        
+        loadBookings();
+
+        // --- Strict Time Picker Initialization ---
+        class StrictTimePicker {
+            constructor(overlayEl, inputId) {
+                this.overlay = overlayEl;
+                this.input = document.getElementById(inputId);
+
+                this.popup = document.createElement('div');
+                this.popup.className = 'strict-timepicker-popup';
+                this.popup.style.display = 'none';
+
+                // State
+                this.currentHour = 12;
+                this.currentMinute = 0;
+                this.currentAmPm = 'PM';
+
+                this.buildUI();
+                document.body.appendChild(this.popup);
+
+                this.overlay.addEventListener('click', (e) => {
+                    if (this.popup.style.display === 'none') {
+                        this.show();
+                    } else {
+                        this.hide();
+                    }
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!this.popup.contains(e.target) && e.target !== this.overlay) {
+                        this.hide();
+                    }
+                });
+                
+                window.addEventListener('resize', () => {
+                    if(this.popup.style.display !== 'none') this.positionPopup();
+                });
+            }
+
+            parseValue(val) {
+                if (!val) return;
+                let [h, m] = val.split(':').map(Number);
+                if (isNaN(h) || isNaN(m)) return;
+                this.currentMinute = m;
+                if (h >= 12) {
+                    this.currentAmPm = 'PM';
+                    this.currentHour = h === 12 ? 12 : h - 12;
+                } else {
+                    this.currentAmPm = 'AM';
+                    this.currentHour = h === 0 ? 12 : h;
+                }
+            }
+
+            updateInput() {
+                let h24 = this.currentHour;
+                if (this.currentAmPm === 'PM' && h24 !== 12) h24 += 12;
+                if (this.currentAmPm === 'AM' && h24 === 12) h24 = 0;
+                
+                const hStr = h24.toString().padStart(2, '0');
+                const mStr = this.currentMinute.toString().padStart(2, '0');
+                this.input.value = `${hStr}:${mStr}`;
+                
+                this.input.dispatchEvent(new Event('input', { bubbles: true }));
+                this.input.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+
+            buildUI() {
+                this.popup.innerHTML = '';
+                
+                this.hourCol = this.createColumn('hour', 1, 12, this.currentHour, (val) => {
+                    this.currentHour = val;
+                    this.updateInput();
+                });
+                
+                this.minuteCol = this.createColumn('minute', 0, 59, this.currentMinute, (val) => {
+                    this.currentMinute = val;
+                    this.updateInput();
+                });
+
+                this.ampmCol = this.createStringColumn('ampm', ['AM', 'PM'], this.currentAmPm, (val) => {
+                    this.currentAmPm = val;
+                    this.updateInput();
+                });
+
+                this.popup.appendChild(this.hourCol.el);
+                this.popup.appendChild(this.minuteCol.el);
+                this.popup.appendChild(this.ampmCol.el);
+            }
+
+            createColumn(type, min, max, initialValue, onChange) {
+                const col = document.createElement('div');
+                col.className = `stp-col ${type}`;
+                
+                const up = document.createElement('div');
+                up.className = 'stp-arrow';
+                up.innerHTML = '&#9650;';
+                
+                const list = document.createElement('div');
+                list.className = 'stp-list';
+                
+                const down = document.createElement('div');
+                down.className = 'stp-arrow';
+                down.innerHTML = '&#9660;';
+
+                const items = [];
+                for (let i = min; i <= max; i++) {
+                    const item = document.createElement('div');
+                    item.className = 'stp-item';
+                    item.textContent = i.toString().padStart(2, '0');
+                    item.dataset.val = i;
+                    if (i === initialValue) item.classList.add('selected');
+                    
+                    item.addEventListener('click', () => {
+                        items.forEach(el => el.classList.remove('selected'));
+                        item.classList.add('selected');
+                        onChange(i);
+                        this.scrollToSelected(list, item);
+                    });
+                    
+                    list.appendChild(item);
+                    items.push(item);
+                }
+
+                up.addEventListener('click', () => {
+                    list.scrollTop -= 30;
+                });
+                down.addEventListener('click', () => {
+                    list.scrollTop += 30;
+                });
+
+                list.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    let newScroll = list.scrollTop + e.deltaY * 0.2;
+                    if (list.scrollHeight > list.clientHeight) {
+                        while (newScroll <= 0) {
+                            list.insertBefore(list.lastElementChild, list.firstElementChild);
+                            newScroll += 30;
+                        }
+                        while (newScroll >= list.scrollHeight - list.clientHeight) {
+                            list.appendChild(list.firstElementChild);
+                            newScroll -= 30;
+                        }
+                    }
+                    list.scrollTop = newScroll;
+                });
+
+                col.appendChild(up);
+                col.appendChild(list);
+                col.appendChild(down);
+
+                return { el: col, list, items };
+            }
+
+            createStringColumn(type, values, initialValue, onChange) {
+                const col = document.createElement('div');
+                col.className = `stp-col ${type}`;
+                
+                const up = document.createElement('div');
+                up.className = 'stp-arrow';
+                up.innerHTML = '&#9650;';
+                up.style.visibility = 'hidden';
+                
+                const list = document.createElement('div');
+                list.className = 'stp-list';
+                
+                const down = document.createElement('div');
+                down.className = 'stp-arrow';
+                down.innerHTML = '&#9660;';
+                down.style.visibility = 'hidden';
+
+                const items = [];
+                values.forEach(v => {
+                    const item = document.createElement('div');
+                    item.className = 'stp-item';
+                    item.textContent = v;
+                    item.dataset.val = v;
+                    if (v === initialValue) item.classList.add('selected');
+                    
+                    item.addEventListener('click', () => {
+                        items.forEach(el => el.classList.remove('selected'));
+                        item.classList.add('selected');
+                        onChange(v);
+                        this.scrollToSelected(list, item);
+                    });
+                    
+                    list.appendChild(item);
+                    items.push(item);
+                });
+
+                up.addEventListener('click', () => {
+                    list.scrollTop -= 30;
+                });
+                down.addEventListener('click', () => {
+                    list.scrollTop += 30;
+                });
+
+                list.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    let newScroll = list.scrollTop + e.deltaY * 0.2;
+                    if (list.scrollHeight > list.clientHeight) {
+                        while (newScroll <= 0) {
+                            list.insertBefore(list.lastElementChild, list.firstElementChild);
+                            newScroll += 30;
+                        }
+                        while (newScroll >= list.scrollHeight - list.clientHeight) {
+                            list.appendChild(list.firstElementChild);
+                            newScroll -= 30;
+                        }
+                    }
+                    list.scrollTop = newScroll;
+                });
+
+                col.appendChild(up);
+                col.appendChild(list);
+                col.appendChild(down);
+
+                return { el: col, list, items };
+            }
+
+            scrollToSelected(list, item) {
+                const offset = item.offsetTop - list.offsetTop;
+                list.scrollTop = offset - 60; // center it
+            }
+
+            syncSelection() {
+                this.hourCol.items.forEach(item => {
+                    if (parseInt(item.dataset.val) === this.currentHour) {
+                        item.classList.add('selected');
+                        this.scrollToSelected(this.hourCol.list, item);
+                    } else {
+                        item.classList.remove('selected');
+                    }
+                });
+                this.minuteCol.items.forEach(item => {
+                    if (parseInt(item.dataset.val) === this.currentMinute) {
+                        item.classList.add('selected');
+                        this.scrollToSelected(this.minuteCol.list, item);
+                    } else {
+                        item.classList.remove('selected');
+                    }
+                });
+                this.ampmCol.items.forEach(item => {
+                    if (item.dataset.val === this.currentAmPm) {
+                        item.classList.add('selected');
+                        this.scrollToSelected(this.ampmCol.list, item);
+                    } else {
+                        item.classList.remove('selected');
+                    }
+                });
+            }
+
+            positionPopup() {
+                const rect = this.input.getBoundingClientRect();
+                this.popup.style.top = (rect.bottom + window.scrollY + 5) + 'px';
+                
+                // Temporarily display to calculate width
+                const wasDisplayed = this.popup.style.display !== 'none';
+                if (!wasDisplayed) this.popup.style.display = 'flex';
+                const popupWidth = this.popup.offsetWidth;
+                if (!wasDisplayed) this.popup.style.display = 'none';
+
+                let leftPos = rect.left + window.scrollX;
+                
+                // If it's the "Time (To)" dropdown, right-align it with the input
+                // so it doesn't overflow the right side of the modal window
+                if (this.input.id === 'booking-time-to') {
+                    leftPos = (rect.right + window.scrollX) - popupWidth;
+                }
+                
+                this.popup.style.left = leftPos + 'px';
+            }
+
+            show() {
+                if (this.input.value) {
+                    this.parseValue(this.input.value);
+                } else {
+                    const now = new Date();
+                    this.currentHour = now.getHours() % 12 || 12;
+                    this.currentMinute = now.getMinutes();
+                    this.currentAmPm = now.getHours() >= 12 ? 'PM' : 'AM';
+                }
+                this.syncSelection();
+                this.positionPopup();
+                this.popup.style.display = 'flex';
+                // Trigger an initial scroll sync after display flex is applied
+                setTimeout(() => this.syncSelection(), 10);
+            }
+
+            hide() {
+                this.popup.style.display = 'none';
+            }
+        }
+
+        document.querySelectorAll('.strict-time-overlay').forEach(overlay => {
+            const targetId = overlay.getAttribute('data-target');
+            if (targetId) {
+                new StrictTimePicker(overlay, targetId);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,330 @@
+/* ============================================================
+   LOGIN PAGE – login.css
+   Simple, clean, white design. No effects or animations.
+   ============================================================ */
+
+/* ---- Reset & Base ---- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  font-size: 0.875rem;
+  color: #333;
+  background-color: #f0f2f5;  /* fallback when no bg image is used */
+  min-height: 100vh;
+}
+
+/* ============================================================
+   BACKGROUND IMAGE
+   Uncomment and adjust the rule below once you supply an image.
+   The <img id="bg-image"> element in the HTML is used as an
+   overlay approach; alternatively use this CSS background on body.
+   ============================================================ */
+/*
+body {
+  background-image: url('../assets/bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+*/
+
+/* Optional: style the <img> bg element if you prefer the HTML approach */
+#bg-image {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 100;
+  filter: brightness(0.5);
+  z-index: 0;
+}
+
+/* ---- Page wrapper – centres the card ---- */
+.page-wrapper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1.5rem;
+}
+
+/* ---- Login card ---- */
+.login-card {
+  background: #ffffff;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  width: 100%;
+  max-width: 400px;
+  padding: 2.25rem 2rem 1.75rem;
+}
+
+/* ---- Brand / logo area ---- */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.brand-icon {
+  font-size: 1.375rem;
+  line-height: 1;
+}
+
+.brand-name {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: 0.3px;
+}
+
+.card-subtitle {
+  font-size: 0.812rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+/* ---- Form groups ---- */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.812rem;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 5px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"] {
+  width: 100%;
+  padding: 9px 0.688rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #333;
+  background: #fff;
+  outline: none;
+  font-family: inherit;
+}
+
+.form-group input:focus {
+  border-color: #4a90d9;
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+/* ---- Captcha row ---- */
+.captcha-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.captcha-box {
+  flex: 1;
+  padding: 9px 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #f7f7f7;
+  font-family: 'Courier New', monospace;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 6px;
+  color: #222;
+  user-select: none;
+  text-align: center;
+  min-height: 42px;
+  line-height: 1.3;
+}
+
+#refresh-captcha {
+  padding: 8px 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #555;
+  line-height: 1;
+}
+
+#refresh-captcha:hover {
+  background: #f0f0f0;
+}
+
+/* ---- Error message ---- */
+.error-msg {
+  font-size: 0.75rem;
+  color: #d9534f;
+  min-height: 14px;
+  margin-bottom: 4px;
+}
+
+/* ---- Login button ---- */
+.btn-login {
+  width: 100%;
+  padding: 0.625rem;
+  background: #1a73e8;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  font-family: inherit;
+}
+
+.btn-login:hover {
+  background: lab(8.81% 1.42 -19.4);
+}
+
+/* ---- Keep me signed in ---- */
+.keep-signed-in {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 0px;
+}
+
+.keep-signed-in input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.keep-signed-in label {
+  font-size: 0.812rem;
+  color: #555;
+  cursor: pointer;
+}
+
+/* ---- Back to home ---- */
+.back-to-home {
+  text-align: center;
+  margin-top: 0.875rem;
+  font-size: 0.812rem;
+}
+
+.back-to-home a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+.back-to-home a:hover {
+  text-decoration: underline;
+}
+/* ---- Forgot password ---- */
+.forgot-password {
+  text-align: center;
+  margin-top: 0.875rem;
+  font-size: 0.812rem;
+}
+
+.forgot-password a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
+}
+
+/* ---- Brand header (logo + title) ---- */
+.brand-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.brand-logo {
+  width: 64px;
+  height: 80px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.brand-title {
+  font-size: clamp(0.938rem, 4.5vw, 1.25rem);
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+/* ---- reCAPTCHA ---- */
+.recaptcha-wrapper {
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  max-width: 100%;
+}
+
+.g-recaptcha {
+  transform: scale(1);
+  transform-origin: 0 0;
+  margin-bottom: 1.25rem;
+}
+
+/* ================================================================
+   LOGIN RESPONSIVE
+   ================================================================ */
+
+@media (max-width: 480px) {
+  .page-wrapper {
+    padding: 1rem;
+    align-items: flex-start;
+    padding-top: 1.5rem;
+  }
+
+  .login-card {
+    padding: 1.5rem 1.25rem 1.25rem;
+    max-width: 100%;
+  }
+
+  .brand-header {
+    gap: 0.625rem;
+  }
+
+  .brand-logo {
+    width: 52px;
+    height: 66px;
+  }
+
+  .g-recaptcha {
+    transform: scale(0.9);
+    transform-origin: 0 0;
+  }
+
+  .recaptcha-wrapper {
+    height: 72px;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .g-recaptcha {
+    transform: scale(0.82);
+  }
+
+  .recaptcha-wrapper {
+    height: 66px;
+  }
+}
